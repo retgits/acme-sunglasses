@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+import "cloudstate/entity_key.proto";
+import "cloudstate/eventing.proto";
+
+package com.acme.sunglasses.warehouse;
+
+message Product {
+    string id = 1 [(.cloudstate.entity_key) = true];
+    string name = 2;
+    string description = 3;
+    string imageURL = 4;
+    float price = 5;
+    int32 stock = 6;
+    repeated string tags = 7;
+}
+
+message GetProduct {
+    string id = 1 [(.cloudstate.entity_key) = true];
+}
+
+message Stock {
+    string id = 1 [(.cloudstate.entity_key) = true];
+    int32 stock = 6;
+}
+
+service Inventory {
+    rpc ReceiveProduct (Product) returns (Product) {
+        option (google.api.http) = {
+            post: "/warehouse/{id}",
+            body: "*"
+        };
+    }
+
+    rpc GetProductDetails (GetProduct) returns (Product) {
+        option (google.api.http) = {
+            get: "/warehouse/{id}"
+        };
+    }
+
+    rpc UpdateStock (Stock) returns (Product) {
+        option (google.api.http) = {
+            post: "/warehouse/{id}/stock",
+            body: "*"
+        };
+    }
+}

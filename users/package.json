@@ -1,0 +1,30 @@
+{
+  "name": "acme-sunglasses-users",
+  "version": "1.0.0",
+  "description": "ACME Sunglasses Users Service",
+  "main": "index.js",
+  "author": "retgits",
+  "license": "MIT",
+  "dependencies": {
+    "@grpc/proto-loader": "^0.5.5",
+    "cloudstate": "0.0.3",
+    "google-protobuf": "^3.14.0",
+    "grpc": "^1.24.4"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^8.2.1"
+  },
+  "scripts": {
+    "test": "mocha",
+    "pretest": "compile-descriptor ./users.proto",
+    "build": "compile-descriptor ./users.proto",
+    "start": "node index.js",
+    "dockerbuild": "docker build . -t ${DOCKER_USER:-retgits}/acmesunglasses-users:$npm_package_version",
+    "dockerpush": "docker push ${DOCKER_USER:-retgits}/acmesunglasses-users:$npm_package_version",
+    "akkaslsdeploy": "akkasls svc deploy acmesunglasses-users docker.io/${DOCKER_USER:-retgits}/acmesunglasses-users:$npm_package_version",
+    "akkaslsexpose": "akkasls svc expose acmesunglasses-users --enable-cors",
+    "akkaslslocalstart": "docker run -d --name acmesunglasses-users -p 8080:8080 ${DOCKER_USER:-retgits}/acmesunglasses-users:$npm_package_version && docker run -d --name proxy -p 9000:9000 --env USER_FUNCTION_HOST=${CURRENT_IP:-host.docker.internal} cloudstateio/cloudstate-proxy-dev-mode:latest",
+    "akkaslslocalstop": "docker stop acmesunglasses-users && docker rm acmesunglasses-users && docker stop proxy && docker rm proxy"
+  }
+}

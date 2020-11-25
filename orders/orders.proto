@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+import "cloudstate/entity_key.proto";
+import "cloudstate/eventing.proto";
+
+package com.acme.sunglasses.orders;
+
+message AllOrders {
+    string userID = 1 [(.cloudstate.entity_key) = true];
+    repeated Order orders = 2;
+}
+
+message Order {
+    string userID = 1 [(.cloudstate.entity_key) = true];
+    string orderID = 2;
+    repeated OrderItem items = 3;
+}
+
+message OrderItem {
+    string productID = 1;
+    int32 quantity = 2;
+    float price = 3;
+}
+
+message GetOrder {
+    string userID = 1 [(.cloudstate.entity_key) = true];
+    string orderID = 2;
+}
+
+message GetOrderHistory {
+    string userID = 1 [(.cloudstate.entity_key) = true];
+}
+
+service Orders {
+    rpc AddOrder (Order) returns (Order) {
+        option (google.api.http) = {
+            post: "/order/{userID}",
+            body: "*"
+        };
+    }
+
+    rpc GetOrderDetails (GetOrder) returns (Order) {
+        option (google.api.http) = {
+            get: "/order/{userID}",
+            body: "*"
+        };
+    }
+
+    rpc GetAllOrders (GetOrderHistory) returns (AllOrders) {
+        option (google.api.http) = {
+            get: "/order/{userID}/all"
+        };
+    }
+}
