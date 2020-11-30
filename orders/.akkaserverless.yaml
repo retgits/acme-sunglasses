@@ -1,0 +1,7 @@
+ASTemplateVersion: 1 ## The current template version
+Resources:
+    Docker:
+        Dockerfile: ./dockerfile
+    Function:
+        Name: acmesunglasses-orders
+        Version: '1.0.0'
